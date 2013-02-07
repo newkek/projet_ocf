@@ -2,7 +2,7 @@ from Point import *
 import Fourmi
 import Couleurs
 import threading
-
+#Commentaire ligne 5
 class Colonie(Point):
     def __init__(self,x,y,nombre_fourmi,origine,vitesse,endurance,tps_phero,ratio,vision,canvas):
         self.coordx=x
