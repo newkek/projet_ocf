@@ -1,6 +1,6 @@
 from Point import *
 import Fourmi
-import Couleurs
+import Globals
 import threading
 #Commentaire ligne 5
 class Colonie(Point):
@@ -9,7 +9,7 @@ class Colonie(Point):
         self.coordy=y
         self.origine=origine
         self.canvas=canvas
-        canvas.create_oval(self.coordx-10,self.coordy-10,self.coordx+10,self.coordy+10,fill=Couleurs.couleurs_colo[origine])
+        canvas.create_oval(self.coordx-10,self.coordy-10,self.coordx+10,self.coordy+10,fill=Globals.couleurs_colo[origine])
         #creation de toutes les fourmis
         self.liste_fourmi=[]
         for step in range(nombre_fourmi):
@@ -19,3 +19,15 @@ class Colonie(Point):
     def go(self):
         for fourmi in self.liste_fourmi:
             fourmi.start()
+            
+    def stop(self):
+        for fourmi in self.liste_fourmi:
+            fourmi.stop()
+            
+    def pause(self):
+        for fourmi in self.liste_fourmi:
+            fourmi.pauser()
+            
+    def continuer(self):
+        for fourmi in self.liste_fourmi:
+            fourmi.continuer()
