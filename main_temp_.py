@@ -1,5 +1,6 @@
 import Monde
 from tkinter import *
+
 global start_clic
 start_clic=False
 
@@ -12,7 +13,6 @@ def go_monde():
     else:
         monde.continuer()
     
-    
 def stop_monde():
     global monde
     monde.stop()
@@ -21,7 +21,7 @@ def stop_monde():
 def pause_monde():
     global monde
     monde.pause()
-    b_start.configure(text="Reprendre")
+    #b_start.configure(text="Reprendre")
     
 def initialisation_interface(fenp):
     var_text=StringVar()

@@ -47,7 +47,7 @@ class Fourmi(Point,threading.Thread):
         if (curpos[0]<=Globals.fourmi_size and depx<0) or (curpos[0]>=Globals.canvas_size-Globals.fourmi_size and depx>0):
             depx=-depx
         if (curpos[1]<=4 and depy<0) or (curpos[1]>=496 and depy>0):
-            depy=-depy 
+            depy=-depy
         return depx,depy
 
         

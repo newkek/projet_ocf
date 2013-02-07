@@ -5,7 +5,7 @@ import Globals
 
 class Monde:
     def __init__(self,fenp):
-        self.canvas=Canvas(fenp,width=Globals.canvas_size,height=Globals.canvas_size,bg="white",bd=2,relief="sunken")
+        self.canvas=Canvas(fenp,width=Globals.canvas_size,height=Globals.canvas_size,bg="gray59",bd=2,relief="sunken")
         self.canvas.grid(row=2,rowspan=25,column=1,columnspan=3)
         cur_button="Chaine correspondant au bouton d'option actif"
         self.canvas.bind('<Button-1>',self.creation)
