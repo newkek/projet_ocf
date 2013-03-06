@@ -1,5 +1,6 @@
 import Monde
 from tkinter import *
+import Globals
 
 global start_clic
 start_clic=False
@@ -21,7 +22,15 @@ def stop_monde():
 def pause_monde():
     global monde
     monde.pause()
-    #b_start.configure(text="Reprendre")
+
+def setRessource():
+    Globals.cur_button="Ressource"
+
+def setColonie():
+    Globals.cur_button="Colonie"
+    
+def setObstacle():
+    Globals.cur_button="Obstacle"
     
 def initialisation_interface(fenp):
     var_text=StringVar()
@@ -47,18 +56,25 @@ def initialisation_interface(fenp):
     
     #monde=Canvas(height=500,width=500,bg="white")
     #monde.grid(row=2,rowspan=25,column=1,columnspan=3)
+    global entry_nid
+    global entry_food
+    global entry_vitesse
+    global entry_endurance
+    global entry_evaporation
+    global entry_vision
     
-    b_nid=Button(fenp,text="Nid",width=10)
+    b_nid=Button(fenp,text="Nid",width=10,command=setColonie)
     b_nid.grid(row=2,column=0)
     entry_nid=Entry(fenp,textvariable=value_nid,width=10)
     entry_nid.grid(row=3,column=0)
+    #entry_nid.bind("<KeyPress>",)
     
-    b_food=Button(fenp,text="Ressource",width=10)
+    b_food=Button(fenp,text="Ressource",width=10,command=setRessource)
     b_food.grid(row=4,column=0)
     entry_food=Entry(fenp,textvariable=value_food,width=10)
     entry_food.grid(row=5,column=0)
     
-    b_obstacle=Button(fenp,text="Obstacle",width=10)
+    b_obstacle=Button(fenp,text="Obstacle",width=10,command=setObstacle)
     b_obstacle.grid(row=6,column=0)
     
     b_pas=Button(fenp,text="Pas",width=10,command=stop_monde)
@@ -79,6 +95,7 @@ def initialisation_interface(fenp):
     l_endurance.grid(row=4,column=19)
     entry_endurance=Entry(fenp,textvariable=value_endurance,width=10)
     entry_endurance.grid(row=5,column=19)
+ 
     
     l_evaporation=Label(fenp,text="Evaporation",width=10)
     l_evaporation.grid(row=6,column=19)

@@ -4,8 +4,7 @@ class Obstacle(Point):
     def __init__(self,x,y,canvas):
         self.coordx=x
         self.coordy=y
-        
-        canvas.create_rectangle(self.coordx-10,self.coordy-10,self.coordx+10,self.coordy+10,fill="black")
+        canvas.create_rectangle(self.coordx-3,self.coordy-3,self.coordx+3,self.coordy+3,fill="black",tags="obst")
         
 
         
