@@ -142,10 +142,10 @@ class Fourmi(Point,threading.Thread):
             if self.endurance_courante:#si on est en mode 'decouverte'
                 if (pher[0]<=four[0] and pher[1]<=four[1]):
                     depx=depx-1
-                    depy=depy-1
+                    depy=depy-2#Comportement comme les chiens, elle va plus vite lorsquelle est sur la piste
                 elif(pher[0]<=four[0] and pher[0]>four[1]):
                     depx=depx-1
-                    depy=depy+1
+                    depy=depy+2
                 elif(pher[0]>four[0] and pher[1]<=four[1]):
                     depx=depx+1
                     depy=depy-2
