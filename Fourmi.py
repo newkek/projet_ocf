@@ -28,6 +28,7 @@ class Fourmi(Point,threading.Thread):
         id_nid=self.canvas.find_withtag("colonie{0}".format(self.origine))
         coords_nid=self.canvas.coords(id_nid)
         self.nid=(coords_nid[0]+10,coords_nid[1]+10)
+        self.departcolo=True
 
     def continuer(self):
         self.pause=False
@@ -49,9 +50,10 @@ class Fourmi(Point,threading.Thread):
         self.pause=True
         
     def prochain_dep(self,curpos):
-        four=(curpos[0]+2,curpos[1]+2)#four sera le centre de la fourmi
+        four=(curpos[0]+Globals.fourmi_size/2,curpos[1]+Globals.fourmi_size/2)#four sera le centre de la fourmi
+        
         if (self.endurance_courante):
-            depx=self.mem_x
+            depx=self.mem_x#deplacement avec l'angle choisi
             depy=self.mem_y
             self.endurance_courante-=1
             if (four[0]<=Globals.fourmi_size and depx<0) or (four[0]>=Globals.canvas_size-Globals.fourmi_size and depx>0):
@@ -61,65 +63,120 @@ class Fourmi(Point,threading.Thread):
             if self.endurance_courante <= 0:
                 self.retour=True
             depx=depx+random.randint(-2,2)
-            depy=depy+random.randint(-1,1)
-            
-        else:#RETOUR
+            depy=depy+random.randint(-1,1) 
+            if self.departcolo is True:
+                self.departcolo=False  
+        else:#MODE RETOUR
+            ###revenir a la colonie
             if (self.nid[0]<=four[0] and self.nid[1]<=four[1]):
-                depx=-3
-                depy=-3
+                depx=-2
+                depy=-2
             elif(self.nid[0]<=four[0] and self.nid[1]>four[1]):
-                depx=-3
-                depy=3
+                depx=-2
+                depy=2
             elif(self.nid[0]>four[0] and self.nid[1]<=four[1]):
-                depx=3
-                depy=-3
+                depx=2
+                depy=-2
             elif(self.nid[0]>four[0] and self.nid[1]>four[1]):
-                depx=3
-                depy=3
-            if((self.nid[0]-10)<four[0]<(self.nid[0]+10) and (self.nid[1]-10)<four[1]<(self.nid[1]+10)):
+                depx=2
+                depy=2
+            ###
+            depx=depx+random.randint(-1,1)
+            depy=depy+random.randint(-1,1)
+            if((self.nid[0]-3)<four[0]<(self.nid[0]+3) and (self.nid[1]-3)<four[1]<(self.nid[1]+3)):#Si on est arrivŽ dans la zone de la colonie    
                 self.endurance_courante=self.endurance
                 self.teta=random.randint(0,360)
                 self.teta=(self.teta*3.14)/180
                 self.mem_x=3*math.cos(self.teta)
                 self.mem_y=3*math.sin(self.teta)
                 self.trouve=False
-            if self.trouve:
+                self.departcolo=True
+            else:
+                self.departcolo=False
+                
+                
+            if self.trouve:#si on a trouve de la bouf on depose des pheromone sur le retour
                 rect=self.canvas.create_rectangle(four[0]-2,four[1]-2,four[0]+2,four[1]+2,fill='indianred3',width=0,tags="pher")
-                self.canvas.lower(rect)
-            depx=depx+random.randint(-2,2)
-            depy=depy+random.randint(-2,2)
-        closest=self.canvas.find_closest(four[0]+depx,four[1]+depy)
-        tags_closest=self.canvas.itemcget(closest,"tags") 
+                depx=depx*0.5
+                depy=depy*0.5
+        ###    I.  A.  
+        closest=self.canvas.find_closest(four[0]+depx,four[1]+depy,halo=3)#recherche de l'objet le plus proche
+        tags_closest=self.canvas.itemcget(closest,"tags")
         if tags_closest=="obst":
-            depx=-depx
+            depx=-depx#on evite le l'obstacle, en inversant on cree l effet 'zombie'
             depy=-depy
-            
         elif tags_closest=="ress":
             curwidth=float(self.canvas.itemcget(closest,"width"))
-            if curwidth>0:
-                if curwidth-0.4<=0:
+            if curwidth>0:#si la ressource n'est pas 'vide' 
+                if curwidth-0.4<=0:#si on c'est la derniere fois que l'on peut subtiliser de la nourriture
                     self.canvas.itemconfigure(closest,fill="grey16")
-                    self.canvas.lower(closest)
+                    self.canvas.lower(closest)#la ressource est 'supprimee'
                 else:
+                    center_res=self.canvas.coords(closest)
+                    center_res[0]=center_res[0]+curwidth
+                    center_res[1]=center_res[1]+curwidth
                     self.canvas.itemconfigure(closest,width=curwidth-0.4)
-                    self.endurance_courante=0
+                    ress=self.canvas.coords(closest)
+                    self.endurance_courante=0#mode retour ON
                     self.trouve=True
-        if tags_closest=="pher":
-            if self.endurance_courante:
-                pher=self.canvas.coords(closest)
+                    self.canvas.tag_raise(closest)
+                    dist=math.sqrt(math.pow(center_res[0]-four[0],2)+math.pow(center_res[1]-four[1],2))
+                    #print(dist, pher[0],pher[1],four[0],four[1])
+                    """colo=self.canvas.find_withtag("colonie{0}".format(self.origine))
+                    self.canvas.itemconfig(colo,tags="trouve")"""
+                    if (center_res[0]<=four[0] and center_res[1]<=four[1]):
+                        depx=-dist
+                        depy=-dist
+                    elif(center_res[0]<=four[0] and center_res[0]>four[1]):
+                        depx=-dist
+                        depy=dist
+                    elif(center_res[0]>four[0] and center_res[1]<=four[1]):
+                        depx=dist
+                        depy=dist
+                    elif(center_res[0]>four[0] and center_res[0]>four[1]):
+                        depx=dist
+                        depy=dist
+                    #print (" dist : ",dist)
+        elif tags_closest=="pher":
+            pher=self.canvas.coords(closest)
+            if self.endurance_courante:#si on est en mode 'decouverte'
                 if (pher[0]<=four[0] and pher[1]<=four[1]):
-                    depx=-2
-                    depy=-2
+                    depx=depx-1
+                    depy=depy-1
                 elif(pher[0]<=four[0] and pher[0]>four[1]):
-                    depx=-2
-                    depy=2
+                    depx=depx-1
+                    depy=depy+1
                 elif(pher[0]>four[0] and pher[1]<=four[1]):
-                    depx=2
-                    depy=-2
+                    depx=depx+1
+                    depy=depy-2
                 elif(pher[0]>four[0] and pher[0]>four[1]):
-                    depx=2
-                    depy=2
+                    depx=depx+1
+                    depy=depy+2
                 
+                if (self.departcolo is True):
+                    dist=math.sqrt(math.pow(pher[0]-four[0],2)+math.pow(pher[1]-four[1],2))
+                    #print(dist, pher[0],pher[1],four[0],four[1])
+            else:
+                
+                """if (pher[0]<=four[0]+depx):
+                    depx=depx+random.randint(0,int(dist))
+                    pass
+                elif(pher[0]>four[0]+depx):
+                    depx=depx-random.randint(0,int(dist))
+                    pass"""
+                if (pher[0]<=four[0] and pher[1]<=four[1]):
+                    self.mem_x=-2
+                    self.mem_y=-2
+                elif(pher[0]<=four[0] and pher[0]>four[1]):
+                    self.mem_x=-2
+                    self.mem_y=2
+                elif(pher[0]>four[0] and pher[1]<=four[1]):
+                    self.mem_x=2
+                    self.mem_y=-2
+                elif(pher[0]>four[0] and pher[0]>four[1]):
+                    self.mem_x=2
+                    self.mem_y=2
+
         return depx,depy
 
         

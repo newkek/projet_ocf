@@ -54,8 +54,6 @@ def initialisation_interface(fenp):
     value_vision=StringVar()
     value_vision.set("10")
     
-    #monde=Canvas(height=500,width=500,bg="white")
-    #monde.grid(row=2,rowspan=25,column=1,columnspan=3)
     global entry_nid
     global entry_food
     global entry_vitesse

@@ -29,6 +29,7 @@ class Monde:
     def stop(self):
         for colo in self.list_colo:
             colo.pause()
+        for colo in self.list_colo:
             colo.stop()
             
     def pause(self):
