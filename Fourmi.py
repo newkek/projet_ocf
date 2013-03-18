@@ -51,8 +51,7 @@ class Fourmi(Point,threading.Thread):
         
     def prochain_dep(self,curpos):
         four=(curpos[0]+Globals.fourmi_size/2,curpos[1]+Globals.fourmi_size/2)#four sera le centre de la fourmi
-        
-        if (self.endurance_courante):
+        if self.endurance_courante:
             depx=self.mem_x#deplacement avec l'angle choisi
             depy=self.mem_y
             self.endurance_courante-=1
@@ -80,12 +79,15 @@ class Fourmi(Point,threading.Thread):
             elif(self.nid[0]>four[0] and self.nid[1]>four[1]):
                 depx=2
                 depy=2
+                
+
+            print("lal",self.mem_x,self.mem_y)
             ###
             depx=depx+random.randint(-1,1)
             depy=depy+random.randint(-1,1)
             if((self.nid[0]-3)<four[0]<(self.nid[0]+3) and (self.nid[1]-3)<four[1]<(self.nid[1]+3)):#Si on est arrivŽ dans la zone de la colonie    
-                self.endurance_courante=self.endurance
-                self.teta=random.randint(0,360)
+                self.endurance_courante=self.endurance#mode retour OFF
+                self.teta=random.randint(0,360)#nouvel angle de depart
                 self.teta=(self.teta*3.14)/180
                 self.mem_x=3*math.cos(self.teta)
                 self.mem_y=3*math.sin(self.teta)
@@ -97,6 +99,8 @@ class Fourmi(Point,threading.Thread):
                 
             if self.trouve:#si on a trouve de la bouf on depose des pheromone sur le retour
                 rect=self.canvas.create_rectangle(four[0]-2,four[1]-2,four[0]+2,four[1]+2,fill='indianred3',width=0,tags="pher")
+                depx=self.mem_x
+                depy=self.mem_y
                 depx=depx*0.5
                 depy=depy*0.5
         ###    I.  A.  
@@ -112,31 +116,19 @@ class Fourmi(Point,threading.Thread):
                     self.canvas.itemconfigure(closest,fill="grey16")
                     self.canvas.lower(closest)#la ressource est 'supprimee'
                 else:
-                    center_res=self.canvas.coords(closest)
-                    center_res[0]=center_res[0]+curwidth
-                    center_res[1]=center_res[1]+curwidth
                     self.canvas.itemconfigure(closest,width=curwidth-0.4)
-                    ress=self.canvas.coords(closest)
-                    self.endurance_courante=0#mode retour ON
-                    self.trouve=True
                     self.canvas.tag_raise(closest)
-                    dist=math.sqrt(math.pow(center_res[0]-four[0],2)+math.pow(center_res[1]-four[1],2))
-                    #print(dist, pher[0],pher[1],four[0],four[1])
-                    """colo=self.canvas.find_withtag("colonie{0}".format(self.origine))
-                    self.canvas.itemconfig(colo,tags="trouve")"""
-                    if (center_res[0]<=four[0] and center_res[1]<=four[1]):
-                        depx=-dist
-                        depy=-dist
-                    elif(center_res[0]<=four[0] and center_res[0]>four[1]):
-                        depx=-dist
-                        depy=dist
-                    elif(center_res[0]>four[0] and center_res[1]<=four[1]):
-                        depx=dist
-                        depy=dist
-                    elif(center_res[0]>four[0] and center_res[0]>four[1]):
-                        depx=dist
-                        depy=dist
-                    #print (" dist : ",dist)
+                self.endurance_courante=0#mode retour ON
+                self.trouve=True
+                B=[self.nid[0],four[1]]
+                AB=abs(B[0]-four[0])
+                AC=math.sqrt(math.pow(self.nid[0]-four[0],2)+math.pow(self.nid[1]-four[1],2))
+                self.teta=-math.acos(AB/AC)
+                print(four, self.nid, B,AB,AC,self.teta)
+                self.mem_x=3*math.cos(self.teta-math.pi)
+                self.mem_y=3*math.sin(self.teta-math.pi)
+                depx=self.mem_x
+                depy=self.mem_y
         elif tags_closest=="pher":
             pher=self.canvas.coords(closest)
             if self.endurance_courante:#si on est en mode 'decouverte'
@@ -163,7 +155,7 @@ class Fourmi(Point,threading.Thread):
                     pass
                 elif(pher[0]>four[0]+depx):
                     depx=depx-random.randint(0,int(dist))
-                    pass"""
+                    pass
                 if (pher[0]<=four[0] and pher[1]<=four[1]):
                     self.mem_x=-2
                     self.mem_y=-2
@@ -175,8 +167,9 @@ class Fourmi(Point,threading.Thread):
                     self.mem_y=-2
                 elif(pher[0]>four[0] and pher[0]>four[1]):
                     self.mem_x=2
-                    self.mem_y=2
-
+                    self.mem_y=2"""
+                pass
+        #print("fin",self.fourm_Id,depx,depy)
         return depx,depy
 
         
