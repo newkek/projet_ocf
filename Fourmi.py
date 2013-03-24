@@ -81,11 +81,10 @@ class Fourmi(Point,threading.Thread):
                 depy=2
                 
 
-            print("lal",self.mem_x,self.mem_y)
             ###
             depx=depx+random.randint(-1,1)
             depy=depy+random.randint(-1,1)
-            if((self.nid[0]-3)<four[0]<(self.nid[0]+3) and (self.nid[1]-3)<four[1]<(self.nid[1]+3)):#Si on est arrivŽ dans la zone de la colonie    
+            if((self.nid[0]-10)<four[0]<(self.nid[0]+10) and (self.nid[1]-10)<four[1]<(self.nid[1]+10)):#Si on est arrivŽ dans la zone de la colonie    
                 self.endurance_courante=self.endurance#mode retour OFF
                 self.teta=random.randint(0,360)#nouvel angle de depart
                 self.teta=(self.teta*3.14)/180
@@ -96,13 +95,12 @@ class Fourmi(Point,threading.Thread):
             else:
                 self.departcolo=False
                 
-                
-            if self.trouve:#si on a trouve de la bouf on depose des pheromone sur le retour
-                rect=self.canvas.create_rectangle(four[0]-2,four[1]-2,four[0]+2,four[1]+2,fill='indianred3',width=0,tags="pher")
-                depx=self.mem_x
-                depy=self.mem_y
-                depx=depx*0.5
-                depy=depy*0.5
+            if self.trouve:#si on a trouve de la bouf on depose des pheromone sur le retour                
+                depx=2*self.mem_x+random.uniform(-0.5,0.5)
+                depy=2*self.mem_y+random.uniform(-0.5,0.5)
+                if int(four[0])%3==0:
+                    self.canvas.create_rectangle(four[0]-2,four[1]-2,four[0]+2,four[1]+2,fill='indianred3',width=0,tags="pher")
+                #print(four[0])
         ###    I.  A.  
         closest=self.canvas.find_closest(four[0]+depx,four[1]+depy,halo=3)#recherche de l'objet le plus proche
         tags_closest=self.canvas.itemcget(closest,"tags")
@@ -121,12 +119,13 @@ class Fourmi(Point,threading.Thread):
                 self.endurance_courante=0#mode retour ON
                 self.trouve=True
                 B=[self.nid[0],four[1]]
-                AB=abs(B[0]-four[0])
-                AC=math.sqrt(math.pow(self.nid[0]-four[0],2)+math.pow(self.nid[1]-four[1],2))
-                self.teta=-math.acos(AB/AC)
-                print(four, self.nid, B,AB,AC,self.teta)
-                self.mem_x=3*math.cos(self.teta-math.pi)
-                self.mem_y=3*math.sin(self.teta-math.pi)
+                AB=B[0]-four[0]
+                BC=B[1]-self.nid[1]
+                tempx=(self.nid[0]-four[0])/abs(self.nid[0]-four[0])
+                self.teta=-math.atan(BC/AB)
+                self.mem_x=tempx*math.cos(self.teta)
+                self.mem_y=tempx*math.sin(self.teta)
+                print(self.mem_x,self.mem_y)
                 depx=self.mem_x
                 depy=self.mem_y
         elif tags_closest=="pher":
