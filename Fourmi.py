@@ -29,7 +29,6 @@ class Fourmi(Point,threading.Thread):
         coords_nid=self.canvas.coords(id_nid)
         self.nid=(coords_nid[0]+10,coords_nid[1]+10)
         self.departcolo=True
-        print(math.degrees(self.teta))
 
     def continuer(self):
         self.pause=False

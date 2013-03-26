@@ -9,12 +9,11 @@ class Colonie(Point):
         self.origine=origine
         self.canvas=canvas
         canvas.create_oval(self.coordx-10,self.coordy-10,self.coordx+10,self.coordy+10,fill=Globals.couleurs_colo[origine],tags="colonie{0}".format(self.origine))
-        #creation de toutes les fourmis
-        print("lalal","colonie {0}".format(self.origine))
+        #creation de toutes les fourmis de la colonie
         self.liste_fourmi=[]
         for step in range(nombre_fourmi):
             self.liste_fourmi.append(Fourmi.Fourmi(self.origine,vitesse,endurance,tps_phero,ratio,vision,self.coordx,self.coordy,canvas))
-            
+            #Fourmi.Fourmi(self.origine,vitesse,endurance,tps_phero,ratio,vision,self.coordx,self.coordy,canvas)
     def go(self):
         for fourmi in self.liste_fourmi:
             fourmi.start()

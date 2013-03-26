@@ -15,13 +15,16 @@ class Monde:
         
     def creation(self,event):
         if Globals.cur_button=="Colonie":
-            self.list_colo.append(Colonie.Colonie(event.x,event.y,50,self.num_colo,0,80,0,0,0,self.canvas))
+            self.list_colo.append(Colonie.Colonie(event.x,event.y,int(Globals.entrys["value_nid"].get()),self.num_colo,int(Globals.entrys["value_speed"].get()),int(Globals.entrys["value_endurance"].get()),int(Globals.entrys["value_evaporation"].get()),0,int(Globals.entrys["value_vision"].get()),self.canvas))
             self.num_colo+=1
+            Globals.buttons["b_start"].configure(state="normal")
+            Globals.buttons["b_stop"].configure(state="normal")
+
         elif Globals.cur_button=="Ressource":
-            Globals.list_ressources.append(Ressource.Ressource(event.x,event.y,20,self.canvas))
+            Globals.list_ressources.append(Ressource.Ressource(event.x,event.y,int(Globals.entrys["value_food"].get()),self.canvas))
         else:
             Globals.list_obst.append(Obstacle.Obstacle(event.x,event.y,self.canvas))
-    
+        
     def go(self):
         for colo in self.list_colo:
             colo.go()
@@ -29,7 +32,6 @@ class Monde:
     def stop(self):
         for colo in self.list_colo:
             colo.pause()
-        for colo in self.list_colo:
             colo.stop()
             
     def pause(self):
