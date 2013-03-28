@@ -1,0 +1,48 @@
+"""moy=[0,0]
+        cpt=0
+        obj=self.canvas.find_enclosed(four[0],four[1],four[0]+depx,four[1]+depy)
+        for item in obj:
+            if self.canvas.gettags(item)=="ress":
+                curcoords=self.canvas.coords(item)
+                moy[0]+=curcoords[0]
+                moy[1]+=curcoords[1]
+                cpt+=1
+        moy[0]=moy[0]/cpt
+        moy[1]=moy[1]/cpt
+        if cpt:#Ya des pheromones dans le cadre enclosed
+            
+            self.redef_depl_pher(four,moy)
+            pass
+        
+            
+            
+             
+        elif tags_closest=="pher":
+            pher=self.canvas.coords(closest)
+            if self.endurance_courante:#si on est en mode 'decouverte'
+                #if (pher[0]<=four[0]):
+                depx=pher[0]-four[0]
+                #depy=pher[1]-four[1]
+                #elif(pher[0]>four[0]):
+                #    depx=depx+6
+
+        else:
+            if (pher[0]<=four[0]+depx):
+                depx=depx+random.randint(0,int(dist))
+                pass
+            elif(pher[0]>four[0]+depx):
+                depx=depx-random.randint(0,int(dist))
+                pass
+            if (pher[0]<=four[0] and pher[1]<=four[1]):
+                self.mem_x=-2
+                self.mem_y=-2
+            elif(pher[0]<=four[0] and pher[0]>four[1]):
+                self.mem_x=-2
+                self.mem_y=2
+            elif(pher[0]>four[0] and pher[1]<=four[1]):
+                self.mem_x=2
+                self.mem_y=-2
+            elif(pher[0]>four[0] and pher[0]>four[1]):
+                self.mem_x=2
+                self.mem_y=2
+            pass"""

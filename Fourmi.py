@@ -4,6 +4,8 @@ import Globals
 import threading
 import time
 import math
+import Pheromone
+
 class Fourmi(Point,threading.Thread):
     def __init__(self,origine,vitesse,endurance,tps_phero,ratio,vision,basex,basey,canvas):
         threading.Thread.__init__(self)
@@ -85,7 +87,8 @@ class Fourmi(Point,threading.Thread):
                 depx=2*self.mem_x
                 depy=2*self.mem_y
                 if int(four[0])%3==0 or int(four[1])%3==0:
-                    self.canvas.create_rectangle(four[0]-2,four[1]-2,four[0]+2,four[1]+2,fill='indianred3',width=0,tags="pher")
+                    id=self.canvas.create_rectangle(four[0]-2,four[1]-2,four[0]+2,four[1]+2,fill='indianred3',width=0,tags="pher")
+                    Globals.list_pher.append(Pheromone.Pheromone(four[0]+1,four[1]+1,self.origine,int(Globals.entrys["value_evaporation"].get()),id))
                 if int(four[0])%10==0 or int(four[1])%10==0:
                     self.redef_depl(four)    
 
@@ -94,17 +97,37 @@ class Fourmi(Point,threading.Thread):
             depy=depy+random.randint(-1,1)
             
             
-            if((self.nid[0]-3)<four[0]<(self.nid[0]+3) and (self.nid[1]-3)<four[1]<(self.nid[1]+3)):#Si on est arrivé dans la zone de la colonie    
-                self.endurance_courante=self.endurance#mode retour OFF
-                self.teta=random.randint(0,360)#nouvel angle de depart
-                self.teta=(self.teta*3.14)/180
-                self.mem_x=2*math.cos(self.teta)
-                self.mem_y=2*math.sin(self.teta)
+            if((self.nid[0]-10)<four[0]<(self.nid[0]+10) and (self.nid[1]-10)<four[1]<(self.nid[1]+10)):#Si on est arrivé dans la zone de la colonie    
+                obj=self.canvas.find_enclosed(self.nid[0]-12,self.nid[1]-12,self.nid[0]+12,self.nid[1]+12)
+                moy=[0,0]
+                cpt=0       
+                for item in obj:
+                    tags=self.canvas.gettags(item)
+                    if tags:
+                        if tags[0]=="pher":
+                            coord_pher=self.canvas.coords(item)
+                            moy[0]+=coord_pher[0]
+                            moy[1]+=coord_pher[1]
+                            cpt+=1
+                if cpt:
+                    moy[0]=moy[0]/cpt
+                    moy[1]=moy[1]/cpt
+                    depx=(self.nid[0]-four[0])
+                    depy=(self.nid[1]-four[1])
+                    
+                    next=(four[0]+depx,four[1]+depy)
+                    self.redef_depl_pher(next,moy)   
+                else:
+                    self.teta=random.randint(0,360)#nouvel angle de depart
+                    self.teta=(self.teta*3.14)/180
+                    self.mem_x=2*math.cos(self.teta)
+                    self.mem_y=2*math.sin(self.teta)
                 self.trouve=False
-                  
+                self.endurance_courante=self.endurance#mode retour OFF
+                return depx,depy      
                     
         ###    I.  A.  
-        closest=self.canvas.find_closest(four[0]+depx,four[1]+depy,halo=3)#recherche de l'objet le plus proche
+        closest=self.canvas.find_closest(four[0]+depx,four[1]+depy,halo=int(Globals.entrys["value_vision"].get()))#recherche de l'objet le plus proche
         tags_closest=self.canvas.itemcget(closest,"tags")
         if tags_closest=="obst":
             depx=-depx#on evite le l'obstacle, en inversant on cree l effet 'zombie'
@@ -125,40 +148,21 @@ class Fourmi(Point,threading.Thread):
                 self.redef_depl(four)
                 depx=self.mem_x#premier deplacement pour le retour a vol doiseau
                 depy=self.mem_y
-                
-                
         elif tags_closest=="pher":
-            pher=self.canvas.coords(closest)
-            if self.endurance_courante:#si on est en mode 'decouverte'
-                """if (pher[0]<=four[0] and pher[1]<=four[1]):
-                    depx=depx-1
-                elif(pher[0]>four[0] and pher[1]<=four[1]):
-                    depx=depx+1"""
-                
-                depx=3*math.cos(self.teta)
-                depy=2*depy
-
-
-            else:
-                """if (pher[0]<=four[0]+depx):
-                    depx=depx+random.randint(0,int(dist))
-                    pass
-                elif(pher[0]>four[0]+depx):
-                    depx=depx-random.randint(0,int(dist))
-                    pass
+            if self.endurance_courante:
+                pher=self.canvas.coords(closest)
                 if (pher[0]<=four[0] and pher[1]<=four[1]):
-                    self.mem_x=-2
-                    self.mem_y=-2
+                    depx=depx-0.5
+                    #depy=depy-1
                 elif(pher[0]<=four[0] and pher[0]>four[1]):
-                    self.mem_x=-2
-                    self.mem_y=2
+                    depx=depx-0.5
+                    #depy=depy+1
                 elif(pher[0]>four[0] and pher[1]<=four[1]):
-                    self.mem_x=2
-                    self.mem_y=-2
+                    depx=depx+0.5
+                    #depy=depy-1
                 elif(pher[0]>four[0] and pher[0]>four[1]):
-                    self.mem_x=2
-                    self.mem_y=2"""
-                pass
+                    depx=depx+0.5
+                    #depy=depy+1
         return depx,depy
     
     def redef_depl(self,four):
@@ -169,7 +173,13 @@ class Fourmi(Point,threading.Thread):
         self.teta=-math.atan(BC/AB)
         self.mem_x=coef*math.cos(self.teta)
         self.mem_y=coef*math.sin(self.teta)
-        print("redef",math.degrees(self.teta))
-        
-    
+
+    def redef_depl_pher(self,four,moyenne):
+        B=[moyenne[0],four[1]]###On défini l'angle pour le retour a vol doiseau
+        AB=B[0]-four[0]
+        BC=B[1]-moyenne[1]
+        coef=(moyenne[0]-four[0])/abs(moyenne[0]-four[0])*2
+        self.teta=-math.atan(BC/AB)
+        self.mem_x=coef*math.cos(self.teta)
+        self.mem_y=coef*math.sin(self.teta)     
     

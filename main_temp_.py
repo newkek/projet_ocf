@@ -43,16 +43,16 @@ def initialisation_interface(fenp):
     Globals.entrys["value_nid"].set("50")
 
     Globals.entrys["value_food"]=StringVar()
-    Globals.entrys["value_food"].set("50")
+    Globals.entrys["value_food"].set("20")
 
     Globals.entrys["value_speed"]=StringVar()
     Globals.entrys["value_speed"].set("10")
 
     Globals.entrys["value_endurance"]=StringVar()
-    Globals.entrys["value_endurance"].set("10")
+    Globals.entrys["value_endurance"].set("75")
 
     Globals.entrys["value_evaporation"]=StringVar()
-    Globals.entrys["value_evaporation"].set("10")
+    Globals.entrys["value_evaporation"].set("50")
 
     Globals.entrys["value_vision"]=StringVar()
     Globals.entrys["value_vision"].set("10")

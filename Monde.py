@@ -3,6 +3,30 @@ import Colonie
 import Obstacle
 import Globals
 import Ressource
+import time
+import threading
+
+
+global terminated
+terminated=False
+
+
+def evap(canvas):
+    time.sleep(2)
+    global terminated
+    while terminated is False:
+        if (Globals.list_pher):
+            for pher in Globals.list_pher:
+                cur=pher.evaporation()
+                if cur==0:
+                    canvas.delete(pher.id_canvas)
+                    time.sleep(0.01)
+            time.sleep(0.5)
+        else:
+            time.sleep(1)
+                
+                
+
 
 class Monde:
     def __init__(self,fenp):
@@ -12,6 +36,7 @@ class Monde:
         self.canvas.bind("<B1-Motion>",self.creer_obstacles)
         self.list_colo=[]
         self.num_colo=0
+        self.deroul_eval=0
         
     def creation(self,event):
         if Globals.cur_button=="Colonie":
@@ -28,12 +53,16 @@ class Monde:
     def go(self):
         for colo in self.list_colo:
             colo.go()
-            
+        self.deroul_eval=threading.Thread(None,evap,None,(self.canvas,),{})
+        self.deroul_eval.start()
+        
     def stop(self):
+        global terminated
+        terminated=True
         for colo in self.list_colo:
             colo.pause()
             colo.stop()
-            
+    
     def pause(self):
         for colo in self.list_colo:
             colo.pause()

@@ -1,8 +1,5 @@
 global couleurs_colo
 couleurs_colo=["red","green","blue","gold","magenta","black"]
-print (couleurs_colo[1])
-# root=Tk() sans le stringvar ne fonctionne pas....
-
 global canvas_size
 canvas_size=500
 global fourmi_size
@@ -23,3 +20,6 @@ buttons={}
 
 global entrys
 entrys={}
+
+global list_pher
+list_pher=[]
