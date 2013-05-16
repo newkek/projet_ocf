@@ -55,7 +55,7 @@ def initialisation_interface(fenp):
     Globals.entrys["value_evaporation"].set("50")
 
     Globals.entrys["value_vision"]=StringVar()
-    Globals.entrys["value_vision"].set("10")
+    Globals.entrys["value_vision"].set("3")
 
 
     Globals.im["Start_button"]=PhotoImage(file="./IMAGE/start.gif")
